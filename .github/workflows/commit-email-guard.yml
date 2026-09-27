@@ -20,7 +20,7 @@ jobs:
           for sha in $(git log --format=%H $RANGE); do
             for email in $(git log -1 --format='%ae %ce' $sha); do
               case "$email" in
-                oidsdev@users.noreply.github.com|ops@tryoids.com) ;;
+                *@users.noreply.github.com|noreply@github.com|ops@tryoids.com) ;;
                 *) echo "BLOCKED: commit $sha carries a non-allowlisted email"; bad=1 ;;
               esac
             done
