@@ -347,3 +347,58 @@ a:hover { text-decoration: underline; }
   .hero h1 { font-size: 1.4rem; }
   #view { padding: 0.75rem 0.75rem 4rem; }
 }
+
+/* Signup credentials + referral note (one-time credential screen) */
+.cred-warning {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+  margin: 0.8rem 0;
+}
+.cred-warning p { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.9rem; }
+.cred-row { display: flex; gap: 0.5rem; align-items: center; }
+.cred-value {
+  flex: 1;
+  display: block;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.7rem;
+  font-size: 0.85rem;
+  word-break: break-all;
+  user-select: all;
+}
+.referral-note {
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.referral-note h3 { margin: 0 0 0.4rem; font-size: 1rem; }
+.referral-note p { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.7rem; }
+.terms-field { display: flex; gap: 0.5rem; align-items: flex-start; }
+.terms-field input { margin-top: 0.2rem; }
+.terms-field label { font-size: 0.92rem; }
+
+/* Docs code blocks with copy buttons */
+.codeblock-wrap { position: relative; margin: 0.6rem 0; }
+.codeblock-wrap .copy-btn {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+}
+
+/* Recommend form textarea */
+.field textarea {
+  width: 100%;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  resize: vertical;
+}
+.field textarea:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
