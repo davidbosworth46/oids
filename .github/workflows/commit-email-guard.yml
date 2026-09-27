@@ -1,0 +1,32 @@
+name: commit-email-guard
+on: [push]
+jobs:
+  check-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reject personal emails in commit metadata
+        run: |
+          set -u
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            RANGE="${{ github.sha }}"
+          else
+            RANGE="$BEFORE..${{ github.sha }}"
+          fi
+          bad=0
+          for sha in $(git log --format=%H $RANGE); do
+            for email in $(git log -1 --format='%ae %ce' $sha); do
+              case "$email" in
+                oidsdev@users.noreply.github.com|ops@tryoids.com) ;;
+                *) echo "BLOCKED: commit $sha carries email $email"; bad=1 ;;
+              esac
+            done
+          done
+          if [ "$bad" = "1" ]; then
+            echo "Push rejected: personal email found in commit metadata."
+            exit 1
+          fi
+          echo "All commit emails allowlisted."
