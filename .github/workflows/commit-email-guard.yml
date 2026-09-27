@@ -21,12 +21,12 @@ jobs:
             for email in $(git log -1 --format='%ae %ce' $sha); do
               case "$email" in
                 oidsdev@users.noreply.github.com|ops@tryoids.com) ;;
-                *) echo "BLOCKED: commit $sha carries email $email"; bad=1 ;;
+                *) echo "BLOCKED: commit $sha carries a non-allowlisted email"; bad=1 ;;
               esac
             done
           done
           if [ "$bad" = "1" ]; then
-            echo "Push rejected: personal email found in commit metadata."
+            echo "Push rejected: non-allowlisted email found in commit metadata."
             exit 1
           fi
           echo "All commit emails allowlisted."
