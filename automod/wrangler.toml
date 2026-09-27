@@ -1,0 +1,60 @@
+# oids-automod — autonomous moderation worker for Oids.
+#
+# BILLING DESIGN (David's hardstop requirement):
+#   - This is the ONLY worker on the Workers Paid plan ($5/mo base).
+#     Paid is unavoidable here: cron triggers at this cadence + Workers AI
+#     both require it.
+#   - The public API worker (../wrangler.toml, name "oids") stays on the FREE
+#     tier by design: over-quota requests there are REJECTED, not billed —
+#     a hard billing cap by construction.
+#   - An hourly usage guard inside the scheduled handler watches the
+#     account's trailing-24h Workers requests via the GraphQL Analytics API;
+#     past THRESHOLD it flips the shared KV kill switch (oids:kill = "1"),
+#     which the API worker honors with HTTP 503 on every route.
+#
+# Deploy: wrangler deploy --config automod/wrangler.toml
+#   (from ~/workspace/oids). Do NOT deploy until the cutover plan is approved.
+
+name = "oids-automod"
+main = "automod/worker.js"
+compatibility_date = "2026-09-27"
+
+# Cron trigger: run the sweep every 15 minutes. The usage guard inside
+# throttles itself to hourly.
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Workers AI binding for gray-area triage (llama-3.1-8b-instruct).
+# Requires Workers Paid. If unavailable at runtime, sweep.js queues gray-area
+# items for human review without an AI verdict (same as today's behavior).
+[ai]
+binding = "AI"
+
+# Same D1 database and KV namespace as the public API worker.
+[[d1_databases]]
+binding = "DB"
+database_name = "oids-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "YOUR_KV_NAMESPACE_ID"
+
+[vars]
+# "1" = dry-run: destructive actions (post soft-delete, key revocation, kill
+# switch flip) are logged but NOT executed. Federal incidents are still
+# packaged with dry_run=1 so the pipeline is verifiable. Set to "0" at cutover.
+AUTOMOD_DRY_RUN = "1"
+# Optional: override the billing-guard tiers (requests/day) without editing
+# code. Defaults: warn 250,000/day (urgent notification), kill 1,000,000/day
+# (flips KV oids:kill). See automod/guard.js.
+# USAGE_WARN_THRESHOLD = "250000"
+# USAGE_KILL_THRESHOLD = "1000000"
+# Optional: pin the Cloudflare account ID for the usage guard. Defaults to
+# the first account returned by GET /client/v4/accounts.
+# CF_ACCOUNT_ID = ""
+# Optional email fan-out for notifications (also run:
+#   wrangler secret put CF_API_TOKEN          (narrow token: Account Analytics read)
+#   wrangler secret put RESEND_API_KEY
+# Leave unset to keep the D1 notifications queue as the only sink.)
+# NOTIFY_EMAIL = ""

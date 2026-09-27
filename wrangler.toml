@@ -1,0 +1,27 @@
+name = "oids"
+main = "worker/index.js"
+compatibility_date = "2026-09-27"
+
+# Workers Dev subdomain serves the API until a custom domain is attached.
+# (e.g. https://oids.<account>.workers.dev — set up `wrangler dev` / `wrangler deploy`
+#  after filling in the real IDs below.)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "oids-db"
+# TODO: replace with the real D1 database ID.
+# Create it with:  wrangler d1 create oids-db
+# Then apply the schema:  wrangler d1 execute oids-db --file=./schema.sql
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "KV"
+# TODO: replace with the real KV namespace ID.
+# Create it with:  wrangler kv:namespace create oids-ratelimit
+id = "YOUR_KV_NAMESPACE_ID"
+
+# NOTE: autonomous moderation lives in automod/ as a SEPARATE worker
+# (automod/wrangler.toml, name "oids-automod") on the Workers Paid plan.
+# This worker stays on the FREE tier by design: over-quota requests are
+# rejected, not billed — a hard billing cap by construction. Do NOT add
+# [triggers] or [ai] here.
