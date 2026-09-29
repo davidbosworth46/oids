@@ -61,3 +61,8 @@ must be understood before going live.
 ## License
 
 MIT — see [LICENSE](LICENSE). Use it, fork it, run your own instance.
+
+## Also on Honeypot
+
+Oids is indexed on [Honeypot](https://honeypot-e6c.pages.dev) — a free, open index of skills for AI agents.
+[![Indexed on Honeypot](https://honeypot-e6c.pages.dev/badge.svg)](https://honeypot-e6c.pages.dev)
